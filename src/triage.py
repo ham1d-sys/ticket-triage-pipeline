@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List, Dict
 
 from dotenv import load_dotenv
-from openai import OpenAI, APIConnectionError, APITimeoutError
+from openai import OpenAI, APIConnectionError
 from pydantic import BaseModel
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential_jitter, RetryError
 
@@ -47,7 +47,7 @@ class TriageProcessor:
         self.output_path = output_path
 
     @retry(
-        retry=retry_if_exception_type((APIConnectionError, APITimeoutError)),
+        retry=retry_if_exception_type(APIConnectionError),
         wait=wait_exponential_jitter(initial=initial_wait, max=max_wait),
         stop=stop_after_attempt(stop_count),
         reraise=True,

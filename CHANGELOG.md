@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.1.5] - 2026-09-06
+
+### Changed
+
+- Simplified retry handling by catching the broader `APIConnectionError` base class instead of the previously listed `APITimeoutError` subclass.
+
 ## [v0.1.4] - 2026-09-06
 
 ### Changed

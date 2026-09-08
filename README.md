@@ -139,7 +139,6 @@ the batch.
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
 | `{'sender': 'a.chen@example.com', 'subject': 'Request for account access', 'body': 'Please provide access to the restricted account settings.', 'received_at': '2026-08-19 11:14:00'}`                      | `['Refusal.']`                                    |
 | `{'sender': 'support@brightpath.io', 'subject': 'Unable to load customer profile', 'body': 'The customer profile request failed repeatedly during troubleshooting.', 'received_at': '2026-08-19 11:37:00'}` | `['APIConnectionError after 4 triage attempts.']` |
-| `{'sender': 'billing@northline.co', 'subject': 'Payment status unavailable', 'body': 'The payment-status request timed out repeatedly during troubleshooting.', 'received_at': '2026-08-19 12:02:00'}`      | `['APITimeoutError after 4 triage attempts.']`    |
 
 ## Testing
 
