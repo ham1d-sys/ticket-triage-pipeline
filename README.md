@@ -1,7 +1,6 @@
-# Ticket Triage Agent
+# Ticket Triage Pipeline
 
-An agentic pipeline that validates and triages support tickets using the OpenAI API. Each valid ticket is classified by
-category and urgency, with a short explanation of the decision. Results are exported as CSV files.
+A pipeline that validates and triages support tickets using the OpenAI API. The pipeline classifies each valid ticket by category and urgency, provides a short explanation of its decision, and exports the results as CSV files.
 
 ## How It Works
 
@@ -29,8 +28,8 @@ You can create an API key from the [OpenAI dashboard](https://platform.openai.co
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ham1d-sys/ticket-triage-agent.git
-cd ticket-triage-agent
+git clone https://github.com/ham1d-sys/ticket-triage-pipeline.git
+cd ticket-triage-pipeline
 ```
 
 ### 2. Create and activate a virtual environment
