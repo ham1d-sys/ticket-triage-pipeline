@@ -1,7 +1,6 @@
-# Ticket Triage Agent
+# Ticket Triage Pipeline
 
-An agentic pipeline that validates and triages support tickets using the OpenAI API. Each valid ticket is classified by
-category and urgency, with a short explanation of the decision. Results are exported as CSV files.
+A pipeline that validates and triages support tickets using the OpenAI API. The pipeline classifies each valid ticket by category and urgency, provides a short explanation of its decision, and exports the results as CSV files.
 
 ## How It Works
 
