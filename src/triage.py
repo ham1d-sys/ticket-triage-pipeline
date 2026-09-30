@@ -94,10 +94,10 @@ class TriageProcessor:
                 unclassified_status = self.triage_ticket(ticket)
                 unclassified_count += unclassified_status
                 failed_retry_count.append(False)
-            except (APIConnectionError, APITimeoutError) as e:
+            except APIConnectionError as e:
                 failed_retry_count.append(True)
                 if len(failed_retry_count) >= self.abort_count and all(failed_retry_count[-self.abort_count:]):
-                    raise RetryError(f"Hit {self.abort_count} consecutive API connection or timeout errors")
+                    raise RetryError(f"Hit {self.abort_count} consecutive API connection errors")
 
                 unclassified_count += 1
                 self.needs_review.append(
