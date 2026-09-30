@@ -95,7 +95,7 @@ code .env
 Run the triage pipeline from the repository root:
 
 ```bash
-python src/triage.py
+python src/main.py
 ```
 
 The generated files are saved in:
@@ -146,3 +146,9 @@ Run the test suite with:
 ```bash
 pytest
 ```
+
+## Known Limitations
+
+- **Aborted batches discard partial results.** When a batch aborts after consecutive transient API failures, `main.py` returns before any output files are written. Tickets already triaged and the invalid-ticket report are not saved, and a re-run processes every ticket again.
+- **Retries stack.** The OpenAI SDK retries a failed request twice by default, and `triage_ticket` adds up to 4 attempts on top of that, so a single ticket can make up to 12 HTTP requests. The `after 4 triage attempts` text in `needs_review.csv` counts only the outer attempts. With the 15-minute client timeout, a run of timeouts can take hours in the worst case before the batch aborts.
+- **Flex capacity errors are not handled.** Flex processing can return `429 Resource Unavailable` when capacity is short. The SDK raises this as `RateLimitError`, which is not an `APIConnectionError`, so it is neither retried by the pipeline nor counted toward the abort threshold, and it stops the run with an unhandled exception. There is no fallback to the standard tier.
