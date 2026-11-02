@@ -1,7 +1,11 @@
-content,reason
-"{'sender': 'j.torres@brightpath.io', 'subject': '', 'body': 'Charged twice this month for the Pro plan.', 'received_at': '2026-08-19 08:03:00'}",['Empty expected field(s).']
-"{'sender': 'info@shopwave.store', 'subject': 'Billing address update', 'body': 'We moved offices, need billing address updated.', 'received_at': ''}",['Empty expected field(s).']
-"{'sender': 'priya.n@northline.co', 'subject': 'Quick one', 'body': 'ok', 'received_at': '2026-08-19 10:05:00'}",['`body` field is under 3 characters.']
-"{'sender': 'lena.h@studiofive.design', 'subject': 'Annual billing discount', 'body': '   ', 'received_at': '2026-08-19 12:30:00'}",['`body` field is under 3 characters.']
-"{'sender': 'sam.okafor@gmail.com', 'subject': 'Export broken', 'body': 'Export to CSV comes back empty every time.', 'received_at': '19/08/2026 11:47'}",['`received_at` field contains an invalid timestamp.']
-"{'sender': 'random123mailinator.com', 'subject': 'asdkjaslkdj', 'body': 'asldkjaslkdjaslkdj', 'received_at': '2026-08-19 13:02:00'}","[""`sender` field doesn't contain a '@' character.""]"
+ticket_id,sender,subject,body,received_at,reason
+T21,z.ahmed@opalworks.pk,Question,,2026-10-28 01:19:45,Empty expected field(s).
+T25,k.lund@nordbyte.no,Address change,"We moved offices, please update our billing address.",,Empty expected field(s).
+T30,,Login issue,I can't sign in since this morning.,2026-10-28 18:15:06,Empty expected field(s).
+T50,ayo.f@paytrail.ng,,I was billed after cancelling.,2026-10-30 10:09:29,Empty expected field(s).
+T06,lena.h@studiofive.design,Annual billing discount,   ,2026-10-26 21:17:30,`body` field is under 3 characters.
+T34,v.santos@tidalwave.br,Quick one,ok,2026-10-29 01:24:17,`body` field is under 3 characters.
+T31,o.eze@nexgrid.ng,Export broken,Export to CSV comes back empty every time.,29/10/2026 11:47,`received_at` field contains an invalid timestamp.
+T37,r.singh@veloxlabs.in,Slow app,The app has been slow all day.,yesterday afternoon,`received_at` field contains an invalid timestamp.
+T24,mailer.daemon.example.org,Re: your order,Where is my order?,2026-10-28 06:30:18,`sender` field doesn't contain a '@' character.
+T36,Support Team,Hello,Please contact us about your account.,2026-10-29 06:33:44,`sender` field doesn't contain a '@' character.

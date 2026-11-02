@@ -118,26 +118,26 @@ the batch.
 
 ### `triaged.csv`
 
-| content                                                                                                                                                                  | category | urgency  | reason                                                                                                                            |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|----------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `{'sender': 'maria.k@example.com', 'subject': "Can't log in", 'body': 'I get invalid credentials every time I try.', 'received_at': '2026-08-19 07:12:00'}`              | `other`  | `medium` | User is unable to log in due to repeated invalid-credentials errors; no evidence of a product bug beyond an authentication issue. |
-| `{'sender': 't.becker@freelance.net', 'subject': 'Thanks for the help', 'body': 'Support resolved my issue fast, appreciate it.', 'received_at': '2026-08-19 10:22:00'}` | `other`  | `low`    | The message is positive feedback thanking support and does not report an issue or request.                                        |
-| `{'sender': 'noreply@dealzhub.biz', 'subject': 'Reward', 'body': 'You have been selected for a free gift card.', 'received_at': '2026-08-19 08:15:00'}`                  | `spam`   | `low`    | Unsolicited free gift card message from a promotional-looking sender, with no support issue described.                            |
+| ticket_id | sender | subject | body | received_at | category | urgency | reason |
+|-----------|---|---|---|---|---|---|---|
+| T01       | `maria.k@example.com` | `Can't log in` | `I get invalid credentials every time I try.` | `2026-08-19 07:12:00` | `other` | `medium` | User is unable to log in due to repeated invalid-credentials errors; no evidence of a product bug beyond an authentication issue. |
+| T02       | `t.becker@freelance.net` | `Thanks for the help` | `Support resolved my issue fast, appreciate it.` | `2026-08-19 10:22:00` | `other` | `low` | The message is positive feedback thanking support and does not report an issue or request. |
+| T03       | `noreply@dealzhub.biz` | `Reward` | `You have been selected for a free gift card.` | `2026-08-19 08:15:00` | `spam` | `low` | Unsolicited free gift card message from a promotional-looking sender, with no support issue described. |
 
 ### `invalid_tickets.csv`
 
-| content                                                                                                                                                | reason                                      |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| `{'sender': 'j.torres@brightpath.io', 'subject': '', 'body': 'Charged twice this month for the Pro plan.', 'received_at': '2026-08-19 08:03:00'}`      | `['Empty expected field(s).']`              |
-| `{'sender': 'info@shopwave.store', 'subject': 'Billing address update', 'body': 'We moved offices, need billing address updated.', 'received_at': ''}` | `['Empty expected field(s).']`              |
-| `{'sender': 'priya.n@northline.co', 'subject': 'Quick one', 'body': 'ok', 'received_at': '2026-08-19 10:05:00'}`                                       | ``['`body` field is under 3 characters.']`` |
+| ticket_id | sender | subject | body | received_at | reason |
+|-----------|---|---|---|---|---|
+| T01       | `j.torres@brightpath.io` |  | `Charged twice this month for the Pro plan.` | `2026-08-19 08:03:00` | `['Empty expected field(s).']` |
+| T02       | `info@shopwave.store` | `Billing address update` | `We moved offices, need billing address updated.` |  | `['Empty expected field(s).']` |
+| T03       | `priya.n@northline.co` | `Quick one` | `ok` | `2026-08-19 10:05:00` | ``['`body` field is under 3 characters.']`` |
 
 ### `needs_review.csv`
 
-| content                                                                                                                                                                                                     | reason                                            |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
-| `{'sender': 'a.chen@example.com', 'subject': 'Request for account access', 'body': 'Please provide access to the restricted account settings.', 'received_at': '2026-08-19 11:14:00'}`                      | `['Refusal.']`                                    |
-| `{'sender': 'support@brightpath.io', 'subject': 'Unable to load customer profile', 'body': 'The customer profile request failed repeatedly during troubleshooting.', 'received_at': '2026-08-19 11:37:00'}` | `['APIConnectionError after 4 triage attempts.']` |
+| ticket_id | sender | subject | body | received_at | reason |
+|-----------|---|---|---|---|---|
+| T01       | `a.chen@example.com` | `Request for account access` | `Please provide access to the restricted account settings.` | `2026-08-19 11:14:00` | `['Refusal.']` |
+| T02       | `support@brightpath.io` | `Unable to load customer profile` | `The customer profile request failed repeatedly during troubleshooting.` | `2026-08-19 11:37:00` | `['APIConnectionError after 4 triage attempts.']` |
 
 ## Testing
 

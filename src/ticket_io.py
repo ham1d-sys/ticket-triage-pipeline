@@ -21,10 +21,9 @@ def load_support_tickets(tickets_path: Path) -> List[Dict]:
 
 def write_invalid_tickets(invalid_tickets: Dict, fieldnames: List[str], output_path: Path) -> None:
     """Write invalid tickets to CSV file."""
-    if invalid_tickets:
-        invalid_tickets_path = output_path / "invalid_tickets.csv"
-        with open(invalid_tickets_path, "w", encoding='UTF-8', newline='') as invalid_tickets_file:
-            writer = csv.DictWriter(invalid_tickets_file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(invalid_tickets.values())
-            logger.info(f"Wrote invalid tickets to '{invalid_tickets_path}'.")
+    invalid_tickets_path = output_path / "invalid_tickets.csv"
+    with open(invalid_tickets_path, "w", encoding='UTF-8', newline='') as invalid_tickets_file:
+        writer = csv.DictWriter(invalid_tickets_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(invalid_tickets.values())
+        logger.info(f"Wrote invalid tickets to '{invalid_tickets_path}'.")

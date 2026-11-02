@@ -9,6 +9,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.1.6] - 2026-11-02
+
+### Fixed
+
+- Always write `triaged.csv`, `needs_review.csv`, and `invalid_tickets.csv` with headers, even when a file has no rows, preventing scores from including stale data.
+- Restricted `category` and `urgency` fields in `TriageSchema` model to their supported values.
+
+### Changed
+
+- Write ticket fields as separate CSV columns instead of serializing tickets as Python dictionaries.
+- Rename the model explanation field to `model_reason`.
+- Store invalid-ticket reasons as a semicolon-separated string instead of a list.
+
 ## [v0.1.5] - 2026-09-06
 
 ### Changed
