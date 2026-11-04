@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.2.1] - 2026-11-04
+
+### Changed
+
+- Improve system prompt.
+
 ## [v0.2.0] - 2026-11-04
 
 ### Added
