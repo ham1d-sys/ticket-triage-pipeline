@@ -9,6 +9,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.2.0] - 2026-11-04
+
+### Added
+
+- Skip previously triaged tickets
+- Create a UTC-timestamped output directory for each run.
+
 ## [v0.1.6] - 2026-11-02
 
 ### Fixed
@@ -20,7 +27,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Write ticket fields as separate CSV columns instead of serializing tickets as Python dictionaries.
-- Rename the model explanation field to `model_reason`.
 - Store invalid-ticket reasons as a semicolon-separated string instead of a list.
 
 ## [v0.1.5] - 2026-09-06
