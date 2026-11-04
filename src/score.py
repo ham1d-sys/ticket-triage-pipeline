@@ -100,8 +100,10 @@ def main():
     overall = both / len(valid)
     edge = edge_both / edge_total if edge_total else 0
     print("=== Triage (valid tickets, category AND urgency must match) ===")
-    print(f"Overall : {pct(both, len(valid))}   target {OVERALL_TARGET:.0%}  -> {'PASS' if overall >= OVERALL_TARGET else 'FAIL'}")
-    print(f"Edge    : {pct(edge_both, edge_total)}   target {EDGE_TARGET:.0%}  -> {'PASS' if edge >= EDGE_TARGET else 'FAIL'}")
+    print(
+        f"Overall : {pct(both, len(valid))}   target {OVERALL_TARGET:.0%}  -> {'PASS' if overall >= OVERALL_TARGET else 'FAIL'}")
+    print(
+        f"Edge    : {pct(edge_both, edge_total)}   target {EDGE_TARGET:.0%}  -> {'PASS' if edge >= EDGE_TARGET else 'FAIL'}")
     print(f"Normal  : {pct(normal_both, normal_total)}")
     print(f"Category only: {pct(cat_ok, len(valid))}")
     print(f"Urgency only : {pct(urg_ok, len(valid))}")

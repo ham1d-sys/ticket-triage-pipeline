@@ -1,13 +1,12 @@
-import csv
 import os
 from logging import getLogger
-from pathlib import Path
-from typing import List, Dict, Literal
+from typing import List, Dict
 
 from dotenv import load_dotenv
 from openai import OpenAI, APIConnectionError
-from pydantic import BaseModel
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential_jitter, RetryError
+
+from schema import TriageSchema
 
 logger = getLogger(__name__)
 
@@ -24,28 +23,20 @@ def get_client():
     if _client is None:
         _client = OpenAI(
             api_key=os.getenv("OPENAI_API_KEY"),
-            timeout=900.0,
         )
     return _client
-
-
-class TriageSchema(BaseModel):
-    """Define JSON output schema"""
-    category: Literal["billing", "bug", "feature_request", "spam", "other"]
-    urgency: Literal["low", "medium", "high"]
-    model_reason: str
 
 
 class TriageProcessor:
     """Triage tickets."""
 
-    def __init__(self, tickets: List[Dict], ticket_fieldnames, output_path: Path, abort_count):
+    def __init__(self, tickets: List[Dict], ticket_fieldnames, triaged_ids, abort_count):
         self.tickets = tickets
         self.ticket_fieldnames = ticket_fieldnames
+        self.triaged_ids = triaged_ids
         self.triaged = []
         self.needs_review = []
         self.abort_count = abort_count
-        self.output_path = output_path
 
     @retry(
         retry=retry_if_exception_type(APIConnectionError),
@@ -68,7 +59,6 @@ class TriageProcessor:
                 },
             ],
             text_format=TriageSchema,
-            service_tier="flex",
         )
         for output in response.output:
             if output.type != "message":
@@ -76,14 +66,17 @@ class TriageProcessor:
 
             for item in output.content:
                 if item.type == "refusal":
-                    self.needs_review.append({**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "Refusal."})
-                    return True # indicate processing failed
+                    self.needs_review.append(
+                        {**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "Refusal."})
+                    return True  # indicate processing failed
                 else:
-                    self.triaged.append({**{name: ticket.get(name) for name in self.ticket_fieldnames}, **response.output_parsed.model_dump()})
-                    return False # indicate processing succeeded
+                    self.triaged.append({**{name: ticket.get(name) for name in self.ticket_fieldnames},
+                                         **response.output_parsed.model_dump()})
+                    return False  # indicate processing succeeded
 
-        self.needs_review.append({**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "No usable response."})
-        return True # indicate processing failed
+        self.needs_review.append(
+            {**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "No usable response."})
+        return True  # indicate processing failed
 
     def triage_tickets(self) -> None:
         """Triage tickets using the OpenAI API."""
@@ -91,6 +84,9 @@ class TriageProcessor:
         failed_retry_count = []
 
         for ticket in self.tickets:
+            if ticket["ticket_id"] in self.triaged_ids:
+                continue
+
             try:
                 unclassified_status = self.triage_ticket(ticket)
                 unclassified_count += unclassified_status
@@ -106,23 +102,3 @@ class TriageProcessor:
 
         if unclassified_count:
             logger.warning(f"{unclassified_count} tickets couldn't be classified. Review them in `needs_review.csv`.")
-
-    def write_outputs(self) -> None:
-        """Write self.needs_review and self.triaged to needs_review.csv and triaged.csv, respectively"""
-        # write self.needs_review
-        needs_review_path = self.output_path / "needs_review.csv"
-        with open(needs_review_path, "w", encoding="UTF-8", newline="") as needs_review_file:
-            fieldnames = ["ticket_id", *self.ticket_fieldnames, "reason"]
-            writer = csv.DictWriter(needs_review_file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(self.needs_review)
-        logger.info(f"Wrote needs-review tickets to '{needs_review_path}'")
-
-        # write self.triaged
-        triaged_path = self.output_path / "triaged.csv"
-        with open(triaged_path, "w", encoding="UTF-8", newline="") as triaged_file:
-            fieldnames = ["ticket_id", *self.ticket_fieldnames, *list(TriageSchema.model_fields)]
-            writer = csv.DictWriter(triaged_file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(self.triaged)
-            logger.info(f"Wrote triage results to '{triaged_path}'")

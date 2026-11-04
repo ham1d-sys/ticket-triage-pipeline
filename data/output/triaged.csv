@@ -1,5 +1,0 @@
-content,category,urgency,reason
-"{'sender': 'maria.k@example.com', 'subject': ""Can't log in"", 'body': 'I get invalid credentials every time I try.', 'received_at': '2026-08-19 07:12:00'}",other,medium,Login failure from invalid credentials prevents account access and requires troubleshooting.
-"{'sender': 'dev@quickstartapp', 'subject': 'API errors', 'body': 'Getting 500s on every /orders call for 20 minutes.', 'received_at': '2026-08-19 11:47:00'}",bug,high,Persistent 500 errors on every /orders API call indicate a widespread production-impacting failure.
-"{'sender': 't.becker@freelance.net', 'subject': 'Thanks for the help', 'body': 'Support resolved my issue fast, appreciate it.', 'received_at': '2026-08-19 10:22:00'}",other,low,"This is a positive thank-you message with no request, issue, billing concern, or bug report."
-"{'sender': 'noreply@dealzhub.biz', 'subject': 'Reward', 'body': 'You have been selected for a free gift card.', 'received_at': '2026-08-19 08:15:00'}",spam,low,"Unsolicited free gift card message from a promotional-looking sender, with no support issue described."

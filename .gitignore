@@ -2,3 +2,5 @@
 /.idea/
 .env
 __pycache__
+.cz.toml
+.pre-commit-config.yaml

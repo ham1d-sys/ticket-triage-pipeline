@@ -9,11 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
-## [0.1.6] - 2026-11-02
+## [v0.1.6] - 2026-11-02
 
 ### Fixed
 
-- Always write `triaged.csv`, `needs_review.csv`, and `invalid_tickets.csv` with headers, even when a file has no rows, preventing scores from including stale data.
+- Always write `triaged.csv`, `needs_review.csv`, and `invalid_tickets.csv` with headers, even when a file has no rows,
+  preventing scores from including stale data.
 - Restricted `category` and `urgency` fields in `TriageSchema` model to their supported values.
 
 ### Changed
@@ -26,7 +27,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Simplified retry handling by catching the broader `APIConnectionError` base class instead of the previously listed `APITimeoutError` subclass.
+- Simplified retry handling by catching the broader `APIConnectionError` base class instead of the previously listed
+  `APITimeoutError` subclass.
 
 ## [v0.1.4] - 2026-09-06
 
@@ -42,7 +44,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fixed the consecutive-error logic to abort only after `abort_count` consecutive failures instead of any failure after that threshold.
+- Fixed the consecutive-error logic to abort only after `abort_count` consecutive failures instead of any failure after
+  that threshold.
 
 ## [v0.1.2] - 2026-09-06
 

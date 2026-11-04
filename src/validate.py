@@ -20,7 +20,8 @@ class TicketValidator:
         """Add invalid tickets to self.invalid_tickets."""
         key = id(ticket)
         if key not in self.invalid_tickets:
-            self.invalid_tickets[key] = {**{name: ticket.get(name) for name in self.expected_ticket_fields}, "reason": reason}
+            self.invalid_tickets[key] = {**{name: ticket.get(name) for name in self.expected_ticket_fields},
+                                         "reason": reason}
         else:
             self.invalid_tickets[key]["reason"] += "; " + reason
 
@@ -40,7 +41,8 @@ class TicketValidator:
             missing_fields = set(self.expected_ticket_fields) - actual_fields
 
             if not missing_fields:
-                empty_fields = set([field for field, val in ticket.items() if field in self.expected_ticket_fields and not val])
+                empty_fields = set(
+                    [field for field, val in ticket.items() if field in self.expected_ticket_fields and not val])
                 if not empty_fields:
                     continue
                 reason_invalid = "Empty expected field(s)."
