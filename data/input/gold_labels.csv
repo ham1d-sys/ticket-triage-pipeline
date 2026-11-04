@@ -1,0 +1,51 @@
+ticket_id,sender,subject,body,received_at,status,category,urgency,is_edge,edge_reason,invalid_reason
+T01,marketing@leadgenpro.co,Quick question,"Hi, I came across your company and would like to offer our lead generation services.",2026-10-26 10:37:07,valid,spam,low,no,,
+T02,promo@cheapmeds-online.net,Limited offer,Buy medications at 80% off. Limited time only.,2026-10-26 12:33:12,valid,spam,low,no,,
+T03,sara.j@kitchenhub.uk,Keyboard shortcuts,Please add keyboard shortcuts for the most common actions.,2026-10-26 15:14:30,valid,feature_request,low,no,,
+T04,h.nguyen@tallyone.vn,App crashes on upload,The app crashes whenever I upload a file larger than 10 MB. Smaller files work fine.,2026-10-26 18:15:09,valid,bug,medium,no,,
+T05,d.walsh@oakline.com,Change plan,How do I switch from the Basic plan to Pro next month?,2026-10-26 20:07:45,valid,billing,low,no,,
+T06,lena.h@studiofive.design,Annual billing discount,   ,2026-10-26 21:17:30,invalid,,,,,`body` field is under 3 characters.
+T07,t.becker@freelance.net,Thanks for the help,"Support resolved my issue fast, appreciate it.",2026-10-26 21:54:32,valid,other,low,no,,
+T08,aisha.b@datapeak.io,API errors,Getting 500 errors on every /orders call for the last 20 minutes. Our checkout is down.,2026-10-27 01:03:46,valid,bug,high,no,,
+T09,j.park@orbitlabs.kr,Data processing agreement,We need a signed data processing agreement before our audit on Friday. Can you send one and tell us where our data is stored?,2026-10-27 02:37:51,valid,other,medium,no,,
+T10,rosa.v@teamloom.es,Slack integration,Can you add a Slack integration so we get notified of new tasks?,2026-10-27 03:57:46,valid,feature_request,low,no,,
+T11,c.dubois@maplegrove.ca,Adding a teammate,How do I add a new teammate to our workspace?,2026-10-27 04:43:10,valid,other,low,no,,
+T12,noreply@dealzhub.biz,Reward,You have been selected for a free gift card. Click here to claim.,2026-10-27 06:14:39,valid,spam,low,no,,
+T13,yusuf.t@mailbridge.ng,Dark mode glitch,In dark mode the sidebar text is hard to read. Not urgent.,2026-10-27 09:17:32,valid,bug,low,no,,
+T14,chioma.e@startmail.ng,Card declined,My card was declined at renewal and my account is now locked until payment goes through. Please help.,2026-10-27 11:10:42,valid,billing,high,no,,
+T15,g.silva@lumo.pt,Love the update,"Love the new update, thanks! One small thing: the export button stays greyed out in Firefox.",2026-10-27 13:05:04,valid,bug,medium,yes,two categories (praise + bug); bug has more impact,
+T16,e.carter@postpilot.io,Scheduling posts,Why can't I schedule posts for later like on other tools? This feels like it's broken.,2026-10-27 14:18:46,valid,feature_request,low,yes,sounds like a bug but asks for a missing feature,
+T17,kevin.l@pixelmint.co,Typo on dashboard,The word 'Analytcs' is misspelled in the dashboard menu.,2026-10-27 15:47:30,valid,bug,low,no,,
+T18,ceo.invest@cryptowave.io,Double your money,"Invest $500 today and receive $1,000 in 48 hours. Guaranteed.",2026-10-27 19:02:11,valid,spam,low,no,,
+T19,anon.user42@proton.me,Help,It's not working again.,2026-10-27 19:40:49,valid,bug,medium,yes,vague body; unclear impact defaults to medium,
+T20,sam.adeyemi@gmail.com,Charged twice,I was charged twice for my Pro plan this month. Please fix this today.,2026-10-27 22:42:59,valid,billing,high,no,,
+T21,z.ahmed@opalworks.pk,Question,,2026-10-28 01:19:45,invalid,,,,,Empty expected field(s).
+T22,li.wei@cloudnest.cn,Calendar sync,Any plans for a Google Calendar sync? It would save me time.,2026-10-28 02:41:55,valid,feature_request,low,no,,
+T23,p.hughes@bluepine.com,UNACCEPTABLE!!!,THIS IS UNACCEPTABLE!!! The logo on the login page looks slightly blurry on my monitor. Fix it NOW.,2026-10-28 05:00:19,valid,bug,low,yes,angry tone but no real impact,
+T24,mailer.daemon.example.org,Re: your order,Where is my order?,2026-10-28 06:30:18,invalid,,,,,`sender` field doesn't contain a '@' character.
+T25,k.lund@nordbyte.no,Address change,"We moved offices, please update our billing address.",,invalid,,,,,Empty expected field(s).
+T26,n.ibrahim@swiftcart.ng,Great product,Just wanted to say the new update is great. Keep it up!,2026-10-28 12:16:16,valid,other,low,no,,
+T27,m.rossi@verdeco.it,Partnership inquiry,We're a design agency interested in becoming a reseller. Who should we talk to?,2026-10-28 15:31:36,valid,other,low,no,,
+T28,d.mensah@payrail.gh,Mobile app,Please build a mobile app. We mostly work from our phones.,2026-10-28 16:05:50,valid,feature_request,low,no,,
+T29,seo.boost@rankfast.xyz,"Get 10,000 visitors","We can boost your website traffic by 10,000 visitors a month. Reply for pricing.",2026-10-28 16:34:41,valid,spam,low,no,,
+T30,,Login issue,I can't sign in since this morning.,2026-10-28 18:15:06,invalid,,,,,Empty expected field(s).
+T31,o.eze@nexgrid.ng,Export broken,Export to CSV comes back empty every time.,29/10/2026 11:47,invalid,,,,,`received_at` field contains an invalid timestamp.
+T32,b.okon@quickmart.ng,refund pls,"Plz refund mi, i was charge 2x for the subscripshun this mnth",2026-10-28 20:58:08,valid,billing,high,yes,typos / informal wording,
+T33,r.alvarez@brightlane.mx,Payment problem,I was charged twice for my plan and then the checkout page crashed when I tried to retry. Please refund the extra charge.,2026-10-28 23:44:04,valid,billing,high,yes,two categories (billing + bug); explicit ask is the refund,
+T34,v.santos@tidalwave.br,Quick one,ok,2026-10-29 01:24:17,invalid,,,,,`body` field is under 3 characters.
+T35,emma.r@clearpath.org,Data missing,All my project data from last week has disappeared from my account.,2026-10-29 04:31:48,valid,bug,high,no,,
+T36,Support Team,Hello,Please contact us about your account.,2026-10-29 06:33:44,invalid,,,,,`sender` field doesn't contain a '@' character.
+T37,r.singh@veloxlabs.in,Slow app,The app has been slow all day.,yesterday afternoon,invalid,,,,,`received_at` field contains an invalid timestamp.
+T38,omar.h@brightdesk.co,Wrong invoice details,Our company name is misspelled on the latest invoice. Please reissue it as 'Brightdesk Ltd'.,2026-10-29 10:34:29,valid,billing,medium,no,,
+T39,grace.o@lumen.edu,Support hours,What are your support hours during public holidays?,2026-10-29 11:29:44,valid,other,low,no,,
+T40,support@paypa1-security.com,Action required: verify your account,We noticed unusual activity. Verify your account within 24 hours by clicking the link below.,2026-10-29 14:13:18,valid,spam,low,yes,spam that looks like a real support message,
+T41,priyanka.s@loopwise.in,Unexpected charge,I see a $49 charge on my statement that I don't recognize. Can you tell me what it is for?,2026-10-29 15:41:05,valid,billing,medium,no,,
+T42,w.chen@ledgerloop.com,Shared reports page,"Our team of 12 can't open the shared reports page, but individual report pages still work. We have a board meeting tomorrow.",2026-10-29 18:30:32,valid,bug,medium,yes,medium/high urgency boundary; workaround exists,
+T43,f.martin@cafelune.fr,Update card,I'd like to update the credit card on file before it expires in December.,2026-10-29 21:19:57,valid,billing,low,no,,
+T44,ben.o@writeflow.app,Export broken,Export to CSV comes back empty every time. I can copy the data by hand for now.,2026-10-29 23:12:11,valid,bug,medium,no,,
+T45,t.okoye@fleetly.com,Search is slow,"Search takes about 10 seconds to return results. It works, just slowly.",2026-10-30 00:07:43,valid,bug,medium,no,,
+T46,jon.p@sketchlane.com,Dark mode idea,Would love a dark mode option for the editor.,2026-10-30 02:33:48,valid,feature_request,low,no,,
+T47,a.kamau@brightfarm.ke,Bulk export,Please add a way to export all projects at once instead of one by one.,2026-10-30 03:06:43,valid,feature_request,low,no,,
+T48,lucia.m@northwind.io,Invoice copy,Could you send me a PDF of the September invoice? I need it for my records.,2026-10-30 03:54:52,valid,billing,low,no,,
+T49,maria.k@example.com,Can't log in,"I get invalid credentials every time I try, even after resetting my password.",2026-10-30 06:55:02,valid,bug,high,no,,
+T50,ayo.f@paytrail.ng,,I was billed after cancelling.,2026-10-30 10:09:29,invalid,,,,,Empty expected field(s).

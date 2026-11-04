@@ -51,7 +51,7 @@ class TriageProcessor:
             input=[
                 {
                     "role": "system",
-                    "content": "You're a support ticket triage assistant. Classify this support ticket into a category (billing / bug / feature_request / spam / other) and an urgency (low / medium / high) with a concise one-line reason.",
+                    "content": "You're a support ticket triage assistant. Classify the ticket below.\nCategory:\n- billing: money: charges, refunds, invoices, plans, payment methods\n- bug: the product misbehaves or breaks, including login and access failures\n- feature_request: asks for something the product doesn't do yet\n- spam: unsolicited promos, scams, or phishing\n- other: real messages that fit none of the above (thanks, general questions)\nUrgency:\n- high: the customer can't use the product, is losing money, or has a security problem right now\n- medium: something is broken or wrong but they can work around it, or it needs a reply soon\n- low: no impact on their work\nRules:\n- If a ticket fits more than one category, choose the issue the customer explicitly asks to have fixed; if none, choose the one with the bigger impact; if still tied, the one mentioned first.\n- Judge urgency by real impact, not tone.\n- If the impact is unclear, use medium.\nGive a concise one-line reason.",
                 },
                 {
                     "role": "user",
