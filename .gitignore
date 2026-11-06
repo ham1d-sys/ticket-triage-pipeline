@@ -4,3 +4,5 @@
 __pycache__
 .cz.toml
 .pre-commit-config.yaml
+data/scoring
+src/score.py

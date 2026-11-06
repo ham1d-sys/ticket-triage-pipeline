@@ -56,7 +56,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fixed the consecutive-error logic to abort only after `abort_count` consecutive failures instead of any failure after
+- Fixed the consecutive-error logic to abort only after `ABORT_COUNT` consecutive failures instead of any failure after
   that threshold.
 
 ## [v0.1.2] - 2026-09-06

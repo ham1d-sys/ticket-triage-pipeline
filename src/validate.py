@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime as dt
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from format import strptime_format_to_iso_8601_template
 
@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 class TicketValidator:
     """Validates support tickets and filters out invalid entries."""
 
-    def __init__(self, tickets: List[Dict], ticket_fields: Tuple[str], timestamp_format: str):
+    def __init__(self, tickets: List[Dict], ticket_schema):
         self.tickets = tickets
-        self.expected_ticket_fields = ticket_fields
-        self.expected_timestamp_format = timestamp_format
+        self.expected_ticket_fields = ticket_schema["fieldnames"]
+        self.expected_timestamp_format = ticket_schema["timestamp_format"]
         self.invalid_tickets = {}
 
     def add_invalid_ticket(self, ticket: Dict, reason: str) -> None:

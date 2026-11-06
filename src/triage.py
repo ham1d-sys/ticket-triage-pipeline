@@ -13,9 +13,13 @@ logger = getLogger(__name__)
 load_dotenv()
 _client = None
 
-initial_wait = 1
-max_wait = 10
-stop_count = 4
+INITIAL_WAIT = 1
+MAX_WAIT = 10
+STOP_COUNT = 4
+ABORT_COUNT = 5
+
+MODEL = "gpt-5.6-luna"
+SYSTEM_PROMPT = "You're a support ticket triage assistant. Classify the ticket below.\nCategory:\n- billing: money: charges, refunds, invoices, plans, payment methods\n- bug: the product misbehaves or breaks, including login and access failures\n- feature_request: asks for something the product doesn't do yet\n- spam: unsolicited promos, scams, or phishing\n- other: real messages that fit none of the above (thanks, general questions)\nUrgency:\n- high: the customer can't use the product, is losing money, or has a security problem right now\n- medium: something is broken or wrong but they can work around it, or it needs a reply soon\n- low: no impact on their work\nRules:\n- If a ticket fits more than one category, choose the issue the customer explicitly asks to have fixed; if none, choose the one with the bigger impact; if still tied, the one mentioned first.\n- Judge urgency by real impact, not tone.\n- If the impact is unclear, use medium.\nGive a concise one-line reason."
 
 
 def get_client():
@@ -30,28 +34,29 @@ def get_client():
 class TriageProcessor:
     """Triage tickets."""
 
-    def __init__(self, tickets: List[Dict], ticket_fieldnames, triaged_ids, abort_count):
+    def __init__(self, tickets: List[Dict], ticket_fieldnames, triaged_ids):
         self.tickets = tickets
         self.ticket_fieldnames = ticket_fieldnames
         self.triaged_ids = triaged_ids
         self.triaged = []
         self.needs_review = []
-        self.abort_count = abort_count
+        self.skipped = 0
+        self.not_attempted = 0
 
     @retry(
         retry=retry_if_exception_type(APIConnectionError),
-        wait=wait_exponential_jitter(initial=initial_wait, max=max_wait),
-        stop=stop_after_attempt(stop_count),
+        wait=wait_exponential_jitter(initial=INITIAL_WAIT, max=MAX_WAIT),
+        stop=stop_after_attempt(STOP_COUNT),
         reraise=True,
     )
     def triage_ticket(self, ticket) -> bool:
         """Triage a single ticket using the OpenAI API."""
         response = get_client().responses.parse(
-            model="gpt-5.6-luna",
+            model=MODEL,
             input=[
                 {
                     "role": "system",
-                    "content": "You're a support ticket triage assistant. Classify the ticket below.\nCategory:\n- billing: money: charges, refunds, invoices, plans, payment methods\n- bug: the product misbehaves or breaks, including login and access failures\n- feature_request: asks for something the product doesn't do yet\n- spam: unsolicited promos, scams, or phishing\n- other: real messages that fit none of the above (thanks, general questions)\nUrgency:\n- high: the customer can't use the product, is losing money, or has a security problem right now\n- medium: something is broken or wrong but they can work around it, or it needs a reply soon\n- low: no impact on their work\nRules:\n- If a ticket fits more than one category, choose the issue the customer explicitly asks to have fixed; if none, choose the one with the bigger impact; if still tied, the one mentioned first.\n- Judge urgency by real impact, not tone.\n- If the impact is unclear, use medium.\nGive a concise one-line reason.",
+                    "content": SYSTEM_PROMPT,
                 },
                 {
                     "role": "user",
@@ -67,15 +72,15 @@ class TriageProcessor:
             for item in output.content:
                 if item.type == "refusal":
                     self.needs_review.append(
-                        {**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "Refusal."})
+                        {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "Refusal."})
                     return True  # indicate processing failed
                 else:
-                    self.triaged.append({**{name: ticket.get(name) for name in self.ticket_fieldnames},
+                    self.triaged.append({**{name: ticket[name] for name in self.ticket_fieldnames},
                                          **response.output_parsed.model_dump()})
                     return False  # indicate processing succeeded
 
         self.needs_review.append(
-            {**{name: ticket.get(name) for name in self.ticket_fieldnames}, "reason": "No usable response."})
+            {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "No usable response."})
         return True  # indicate processing failed
 
     def triage_tickets(self) -> None:
@@ -83,8 +88,9 @@ class TriageProcessor:
         unclassified_count = 0
         failed_retry_count = []
 
-        for ticket in self.tickets:
+        for i, ticket in enumerate(self.tickets):
             if ticket["ticket_id"] in self.triaged_ids:
+                self.skipped += 1
                 continue
 
             try:
@@ -92,13 +98,15 @@ class TriageProcessor:
                 unclassified_count += unclassified_status
                 failed_retry_count.append(False)
             except APIConnectionError as e:
-                failed_retry_count.append(True)
-                if len(failed_retry_count) >= self.abort_count and all(failed_retry_count[-self.abort_count:]):
-                    raise RetryError(f"Hit {self.abort_count} consecutive API connection errors")
-
                 unclassified_count += 1
                 self.needs_review.append(
-                    {"content": ticket, "reason": f"{type(e).__name__} after {stop_count} triage attempts."})
+                    {**{name: ticket[name] for name in self.ticket_fieldnames},
+                     "reason": f"{type(e).__name__} after {STOP_COUNT} triage attempts."})
+
+                failed_retry_count.append(True)
+                if len(failed_retry_count) >= ABORT_COUNT and all(failed_retry_count[-ABORT_COUNT:]):
+                    self.not_attempted = len(self.tickets) - i
+                    raise RetryError(f"Hit {ABORT_COUNT} consecutive API connection errors")
 
         if unclassified_count:
             logger.warning(f"{unclassified_count} tickets couldn't be classified. Review them in `needs_review.csv`.")

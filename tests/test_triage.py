@@ -4,7 +4,7 @@ import pytest
 from openai import APIConnectionError
 from tenacity import wait_none, RetryError
 
-from triage import TriageProcessor, stop_count
+from triage import TriageProcessor, STOP_COUNT
 
 test_tickets = [{
     "sender": "maria.k@example.com",
@@ -50,7 +50,7 @@ def test_triage_ticket_retry_after_transient_error(mock_client, triage_processor
 
     stats = triage_processor.triage_ticket.statistics
     assert "attempt_number" in stats
-    assert stats["attempt_number"] == stop_count
+    assert stats["attempt_number"] == STOP_COUNT
 
 
 @patch("triage.get_client")
