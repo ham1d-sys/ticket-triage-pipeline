@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.3.1] - 2026-11-06
+
+### Added
+
+- Write a manifest each run
+
 ## [v0.2.1] - 2026-11-04
 
 ### Changed
