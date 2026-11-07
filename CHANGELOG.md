@@ -9,6 +9,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.5.0] - 2026-11-07
+
+### Added
+
+- Select the run mode with a command-line flag instead of a module constant.
+
+### Fixed
+
+- Restore `invalid_tickets.csv` output, which was missing due to a regression in v0.3.1.
+
 ## [v0.4.0] - 2026-11-07
 
 ### Added
@@ -23,7 +33,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Ensure `manifest.json` records a final status after aborted or failed runs. The error field now stores the exception message as a string, rather than the exception object.
+- Ensure `manifest.json` records a final status after aborted or failed runs. The error field now stores the exception
+  message as a string, rather than the exception object.
 
 ## [v0.3.1] - 2026-11-06
 
