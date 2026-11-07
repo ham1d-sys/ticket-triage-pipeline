@@ -9,11 +9,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.4.0] - 2026-11-07
+
+### Added
+
+- Validate that input and output ticket counts reconcile.
+- Write unattempted tickets for every run.
+- Retry rate-limit and internal server errors.
+
+### Changed
+
+- Consolidate ticket writing into a single function.
+
+### Fixed
+
+- Ensure `manifest.json` records a final status after aborted or failed runs. The error field now stores the exception message as a string, rather than the exception object.
+
 ## [v0.3.1] - 2026-11-06
 
 ### Added
 
-- Write a manifest each run
+- Write a manifest every run
 
 ## [v0.2.1] - 2026-11-04
 
