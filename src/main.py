@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import logging
 import uuid
 from collections import Counter
@@ -8,44 +7,64 @@ from pathlib import Path
 
 from tenacity import RetryError
 
-from hashing_helper import sha256_text, sha256_file
-from manifest import Manifest, get_git_sha, get_release_tag, is_dirty, write_manifest
-from ticket_io import load_support_tickets, write_invalid_tickets, write_needs_review_tickets, write_triaged_tickets
-from triage import TriageProcessor, MODEL, SYSTEM_PROMPT, ABORT_COUNT
+from hashing_helper import sha256_file, sha256_text
+from manifest import (
+    Manifest,
+    get_git_sha,
+    get_release_tag,
+    is_dirty,
+    write_manifest,
+)
+from schema import TriageSchema
+from ticket_io import load_support_tickets, write_tickets
+from triage import ABORT_COUNT, MODEL, SYSTEM_PROMPT, TriageProcessor
 from validate import TicketValidator
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(pathname)s - %(asctime)s - %(message)s")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s - %(pathname)s - %(asctime)s - %(message)s",
+)
 logger = logging.getLogger(__name__)
 
 MANIFEST_VERSION = 2
 MODE = "production"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-support_tickets_path = PROJECT_ROOT / "data" / "input" / "support_tickets_test.csv"
-output_path = PROJECT_ROOT / "data" / "output"
+SUPPORT_TICKETS_PATH = (
+    PROJECT_ROOT / "data" / "input" / "support_tickets_test.csv"
+)
+OUTPUT_PATH = PROJECT_ROOT / "data" / "output"
 
-ticket_schema = {"fieldnames": ("ticket_id", "sender", "subject", "body", "received_at"),
-                 "timestamp_format": "%Y-%m-%d %H:%M:%S"}
+TICKET_SCHEMA = {
+    "fieldnames": ("ticket_id", "sender", "subject", "body", "received_at"),
+    "timestamp_format": "%Y-%m-%d %H:%M:%S",
+}
 
 
 def generate_run_dir(run_id: str) -> Path:
-    """
-    Create a unique directory for current run.
-    :return: Path object containing current run directory.
-    """
-    global output_path
-    run_dir = output_path / run_id
+    """Create and return a unique directory for the current run."""
+    run_dir = OUTPUT_PATH / run_id
     run_dir.mkdir(parents=True)
     return run_dir
 
 
-def load_triaged_ids():
-    """Collect tickets ids from `triaged.csv` files in past runs directories."""
-    global output_path
+def load_triaged_ids() -> set[str]:
+    """Collect ticket IDs from triaged.csv files in past run directories."""
     triaged_ids = set()
-    for triaged in output_path.glob("*/triaged.csv"):
-        with open(triaged, "r", encoding="UTF-8", newline="") as triaged_file:
-            triaged_ids.update(ticket["ticket_id"] for ticket in csv.DictReader(triaged_file))
+
+    for triaged_file_path in OUTPUT_PATH.glob("*/triaged.csv"):
+        with open(
+            triaged_file_path,
+            "r",
+            encoding="UTF-8",
+            newline="",
+        ) as triaged_file:
+            triaged_ids.update(
+                ticket["ticket_id"]
+                for ticket in csv.DictReader(triaged_file)
+            )
+
     return triaged_ids
 
 
@@ -53,21 +72,44 @@ def main():
     start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     run_id = start_time.replace(":", "-") + "_" + uuid.uuid4().hex
     run_path = generate_run_dir(run_id)
-    code_info = {"git_sha": get_git_sha(PROJECT_ROOT), "release": get_release_tag(PROJECT_ROOT),
-                 "dirty": is_dirty(PROJECT_ROOT)}
-    config_info = {"model": MODEL, "prompt_sha256": sha256_text(SYSTEM_PROMPT), "abort_count": ABORT_COUNT}
-    input_info = {"path": str(support_tickets_path), "sha256": sha256_file(support_tickets_path)}
-    manifest_state = Manifest(manifest_version=MANIFEST_VERSION, run_id=run_id, status="running", mode=MODE,
-                              started_at=start_time, code=code_info, config=config_info, input=input_info)
+
+    code_info = {
+        "git_sha": get_git_sha(PROJECT_ROOT),
+        "release": get_release_tag(PROJECT_ROOT),
+        "dirty": is_dirty(PROJECT_ROOT),
+    }
+    config_info = {
+        "model": MODEL,
+        "prompt_sha256": sha256_text(SYSTEM_PROMPT),
+        "abort_count": ABORT_COUNT,
+    }
+    input_info = {
+        "path": str(SUPPORT_TICKETS_PATH),
+        "sha256": sha256_file(SUPPORT_TICKETS_PATH),
+    }
+
+    manifest_state = Manifest(
+        manifest_version=MANIFEST_VERSION,
+        run_id=run_id,
+        status="running",
+        mode=MODE,
+        started_at=start_time,
+        code=code_info,
+        config=config_info,
+        input=input_info,
+    )
     write_manifest(run_path, manifest_state)
 
     try:
-        support_tickets = load_support_tickets(support_tickets_path)
-        triaged_tickets_ids = []
+        support_tickets = load_support_tickets(SUPPORT_TICKETS_PATH)
+
+        triaged_ticket_ids = []
         if MODE == "production":
-            triaged_tickets_ids = load_triaged_ids()
-        ticket_validator = TicketValidator(support_tickets, ticket_schema)
+            triaged_ticket_ids = load_triaged_ids()
+
+        ticket_validator = TicketValidator(support_tickets, TICKET_SCHEMA)
         ticket_validator.ensure_expected_fields_present_and_non_empty()
+        ticket_validator.ensure_ticket_id_unique()
         ticket_validator.ensure_body_in_valid_tickets_gte_3_chars()
         ticket_validator.ensure_valid_received_at_timestamp()
         ticket_validator.ensure_valid_sender()
@@ -76,34 +118,85 @@ def main():
         invalid_tickets = ticket_validator.invalid_tickets
         valid_tickets = ticket_validator.tickets
 
-        triage_processor = TriageProcessor(valid_tickets, ticket_schema["fieldnames"], triaged_tickets_ids)
+        triage_processor = TriageProcessor(
+            valid_tickets,
+            TICKET_SCHEMA["fieldnames"],
+            triaged_ticket_ids,
+        )
+
         try:
             triage_processor.triage_tickets()
-        except RetryError as e:
+        except RetryError as error:
             manifest_state.status = "aborted"
-            manifest_state.error = e
-            logger.warning(f"{type(e).__name__}: {e}. Batch aborted.")
+            manifest_state.error = f"{type(error).__name__}: {error}"
+            logger.warning("%s. Batch aborted.", manifest_state.error)
 
         needs_review_tickets = triage_processor.needs_review
         triaged_tickets = triage_processor.triaged
+        unattempted_tickets = triage_processor.unattempted
 
-        manifest_state.counts = {"loaded": len(support_tickets), "invalid": len(invalid_tickets),
-                                 "skipped": triage_processor.skipped, "triaged": len(triaged_tickets),
-                                 "needs_review": len(needs_review_tickets),
-                                 "not_attempted": triage_processor.not_attempted}
-        manifest_state.needs_review_breakdown = dict(Counter(ticket["reason"] for ticket in needs_review_tickets))
+        manifest_state.counts = {
+            "loaded": len(support_tickets),
+            "invalid": len(invalid_tickets),
+            "skipped": triage_processor.skipped,
+            "triaged": len(triaged_tickets),
+            "needs_review": len(needs_review_tickets),
+            "unattempted": len(unattempted_tickets),
+        }
+        manifest_state.needs_review_breakdown = dict(
+            Counter(ticket["reason"] for ticket in needs_review_tickets)
+        )
 
-        write_invalid_tickets(invalid_tickets, ticket_schema["fieldnames"], run_path)
-        write_needs_review_tickets(needs_review_tickets, ticket_schema["fieldnames"], run_path)
-        write_triaged_tickets(triaged_tickets, ticket_schema["fieldnames"], run_path)
-    except Exception as e:
+        counts = manifest_state.counts
+        accounted = (
+                counts["invalid"]
+                + counts["skipped"]
+                + counts["triaged"]
+                + counts["needs_review"]
+                + counts["unattempted"]
+        )
+
+        if accounted != counts["loaded"]:
+            logger.warning(f"Count mismatch: loaded {counts["loaded"]} tickets but accounted for {accounted} tickets.")
+            manifest_state.status = "failed"
+            manifest_state.error = "Count mismatch."
+
+        ticket_fieldnames = TICKET_SCHEMA["fieldnames"]
+        triage_fields = tuple(TriageSchema.model_fields)
+
+        write_tickets(
+            needs_review_tickets,
+            ticket_fieldnames,
+            run_path,
+            "needs_review.csv",
+            ("reason",),
+        )
+        write_tickets(
+            triaged_tickets,
+            ticket_fieldnames,
+            run_path,
+            "triaged.csv",
+            triage_fields,
+        )
+        write_tickets(
+            unattempted_tickets,
+            ticket_fieldnames,
+            run_path,
+            "unattempted.csv",
+        )
+
+    except Exception as error:
         manifest_state.status = "failed"
-        manifest_state.error = e
-        logger.warning(f"{type(e).__name__}: {e}. Run failed.")
+        manifest_state.error = f"{type(error).__name__}: {error}"
+        logger.warning("%s. Run failed.", manifest_state.error)
+
     finally:
         if manifest_state.status == "running":
             manifest_state.status = "completed"
-        manifest_state.finished_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        manifest_state.finished_at = datetime.now(timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
         write_manifest(run_path, manifest_state)
 
 

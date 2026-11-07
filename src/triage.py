@@ -1,9 +1,9 @@
 import os
 from logging import getLogger
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from dotenv import load_dotenv
-from openai import OpenAI, APIConnectionError
+from openai import OpenAI, APIConnectionError, RateLimitError, InternalServerError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential_jitter, RetryError
 
 from schema import TriageSchema
@@ -15,7 +15,7 @@ _client = None
 
 INITIAL_WAIT = 1
 MAX_WAIT = 10
-STOP_COUNT = 4
+STOP_COUNT = 6
 ABORT_COUNT = 5
 
 MODEL = "gpt-5.6-luna"
@@ -34,22 +34,23 @@ def get_client():
 class TriageProcessor:
     """Triage tickets."""
 
-    def __init__(self, tickets: List[Dict], ticket_fieldnames, triaged_ids):
+    def __init__(self, tickets: List[Dict[str, str]], ticket_fieldnames, triaged_ids):
         self.tickets = tickets
         self.ticket_fieldnames = ticket_fieldnames
         self.triaged_ids = triaged_ids
         self.triaged = []
         self.needs_review = []
         self.skipped = 0
-        self.not_attempted = 0
+        self.attempted_ids = []
+        self.unattempted = []
 
     @retry(
-        retry=retry_if_exception_type(APIConnectionError),
+        retry=retry_if_exception_type((APIConnectionError, RateLimitError, InternalServerError)),
         wait=wait_exponential_jitter(initial=INITIAL_WAIT, max=MAX_WAIT),
         stop=stop_after_attempt(STOP_COUNT),
         reraise=True,
     )
-    def triage_ticket(self, ticket) -> bool:
+    def triage_ticket(self, ticket: Dict[str, str]) -> bool:
         """Triage a single ticket using the OpenAI API."""
         response = get_client().responses.parse(
             model=MODEL,
@@ -73,14 +74,17 @@ class TriageProcessor:
                 if item.type == "refusal":
                     self.needs_review.append(
                         {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "Refusal."})
+                    self.attempted_ids.append(ticket["ticket_id"])
                     return True  # indicate processing failed
                 else:
                     self.triaged.append({**{name: ticket[name] for name in self.ticket_fieldnames},
                                          **response.output_parsed.model_dump()})
+                    self.attempted_ids.append(ticket["ticket_id"])
                     return False  # indicate processing succeeded
 
         self.needs_review.append(
             {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "No usable response."})
+        self.attempted_ids.append(ticket["ticket_id"])
         return True  # indicate processing failed
 
     def triage_tickets(self) -> None:
@@ -88,7 +92,7 @@ class TriageProcessor:
         unclassified_count = 0
         failed_retry_count = []
 
-        for i, ticket in enumerate(self.tickets):
+        for ticket in self.tickets:
             if ticket["ticket_id"] in self.triaged_ids:
                 self.skipped += 1
                 continue
@@ -97,16 +101,17 @@ class TriageProcessor:
                 unclassified_status = self.triage_ticket(ticket)
                 unclassified_count += unclassified_status
                 failed_retry_count.append(False)
-            except APIConnectionError as e:
+            except (APIConnectionError, RateLimitError) as e:
                 unclassified_count += 1
                 self.needs_review.append(
                     {**{name: ticket[name] for name in self.ticket_fieldnames},
                      "reason": f"{type(e).__name__} after {STOP_COUNT} triage attempts."})
-
+                self.attempted_ids.append(ticket["ticket_id"])
                 failed_retry_count.append(True)
+
                 if len(failed_retry_count) >= ABORT_COUNT and all(failed_retry_count[-ABORT_COUNT:]):
-                    self.not_attempted = len(self.tickets) - i
-                    raise RetryError(f"Hit {ABORT_COUNT} consecutive API connection errors")
+                    self.unattempted = [ticket for ticket in self.tickets if ticket["ticket_id"] not in self.attempted_ids]
+                    raise RetryError(f"Hit {ABORT_COUNT} consecutive API connection, rate-limit or internal server errors")
 
         if unclassified_count:
             logger.warning(f"{unclassified_count} tickets couldn't be classified. Review them in `needs_review.csv`.")

@@ -36,7 +36,7 @@ class CountsInfo:
     skipped: int = 0
     triaged: int = 0
     needs_review: int = 0
-    not_attempted: int = 0
+    unattempted: int = 0
 
 
 def git(*args: str, repo: str = ".") -> str:
