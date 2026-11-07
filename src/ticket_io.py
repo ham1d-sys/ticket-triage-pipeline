@@ -20,11 +20,11 @@ def load_support_tickets(tickets_path: Path) -> list[dict[str, str]]:
 
 
 def write_tickets(
-    tickets: list[dict[str, str]],
-    ticket_fieldnames: tuple[str, ...],
-    run_path: Path,
-    filename: str,
-    extra_fieldnames: tuple[str, ...] = (),
+        tickets: list[dict[str, str]],
+        ticket_fieldnames: tuple[str, ...],
+        run_path: Path,
+        filename: str,
+        extra_fieldnames: tuple[str, ...] = (),
 ) -> None:
     """Write tickets to a CSV file."""
     output_path = run_path / filename

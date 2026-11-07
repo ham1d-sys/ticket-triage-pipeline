@@ -1,6 +1,6 @@
 import os
 from logging import getLogger
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from dotenv import load_dotenv
 from openai import OpenAI, APIConnectionError, RateLimitError, InternalServerError
@@ -17,6 +17,7 @@ INITIAL_WAIT = 1
 MAX_WAIT = 10
 STOP_COUNT = 6
 ABORT_COUNT = 5
+RETRY_EXCEPTIONS = (APIConnectionError, RateLimitError, InternalServerError)
 
 MODEL = "gpt-5.6-luna"
 SYSTEM_PROMPT = "You're a support ticket triage assistant. Classify the ticket below.\nCategory:\n- billing: money: charges, refunds, invoices, plans, payment methods\n- bug: the product misbehaves or breaks, including login and access failures\n- feature_request: asks for something the product doesn't do yet\n- spam: unsolicited promos, scams, or phishing\n- other: real messages that fit none of the above (thanks, general questions)\nUrgency:\n- high: the customer can't use the product, is losing money, or has a security problem right now\n- medium: something is broken or wrong but they can work around it, or it needs a reply soon\n- low: no impact on their work\nRules:\n- If a ticket fits more than one category, choose the issue the customer explicitly asks to have fixed; if none, choose the one with the bigger impact; if still tied, the one mentioned first.\n- Judge urgency by real impact, not tone.\n- If the impact is unclear, use medium.\nGive a concise one-line reason."
@@ -45,7 +46,7 @@ class TriageProcessor:
         self.unattempted = []
 
     @retry(
-        retry=retry_if_exception_type((APIConnectionError, RateLimitError, InternalServerError)),
+        retry=retry_if_exception_type(RETRY_EXCEPTIONS),
         wait=wait_exponential_jitter(initial=INITIAL_WAIT, max=MAX_WAIT),
         stop=stop_after_attempt(STOP_COUNT),
         reraise=True,
@@ -101,7 +102,7 @@ class TriageProcessor:
                 unclassified_status = self.triage_ticket(ticket)
                 unclassified_count += unclassified_status
                 failed_retry_count.append(False)
-            except (APIConnectionError, RateLimitError) as e:
+            except RETRY_EXCEPTIONS as e:
                 unclassified_count += 1
                 self.needs_review.append(
                     {**{name: ticket[name] for name in self.ticket_fieldnames},
@@ -110,8 +111,10 @@ class TriageProcessor:
                 failed_retry_count.append(True)
 
                 if len(failed_retry_count) >= ABORT_COUNT and all(failed_retry_count[-ABORT_COUNT:]):
-                    self.unattempted = [ticket for ticket in self.tickets if ticket["ticket_id"] not in self.attempted_ids]
-                    raise RetryError(f"Hit {ABORT_COUNT} consecutive API connection, rate-limit or internal server errors")
+                    self.unattempted = [ticket for ticket in self.tickets if
+                                        ticket["ticket_id"] not in self.attempted_ids]
+                    raise RetryError(
+                        f"Hit {ABORT_COUNT} consecutive API connection, rate-limit or internal server errors")
 
         if unclassified_count:
             logger.warning(f"{unclassified_count} tickets couldn't be classified. Review them in `needs_review.csv`.")

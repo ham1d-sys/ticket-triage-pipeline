@@ -1,9 +1,11 @@
+import argparse
 import csv
 import logging
 import uuid
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import get_args, get_type_hints
 
 from tenacity import RetryError
 
@@ -20,7 +22,6 @@ from ticket_io import load_support_tickets, write_tickets
 from triage import ABORT_COUNT, MODEL, SYSTEM_PROMPT, TriageProcessor
 from validate import TicketValidator
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s - %(pathname)s - %(asctime)s - %(message)s",
@@ -28,11 +29,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 MANIFEST_VERSION = 2
-MODE = "production"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SUPPORT_TICKETS_PATH = (
-    PROJECT_ROOT / "data" / "input" / "support_tickets_test.csv"
+        PROJECT_ROOT / "data" / "input" / "support_tickets_test.csv"
 )
 OUTPUT_PATH = PROJECT_ROOT / "data" / "output"
 
@@ -40,6 +40,17 @@ TICKET_SCHEMA = {
     "fieldnames": ("ticket_id", "sender", "subject", "body", "received_at"),
     "timestamp_format": "%Y-%m-%d %H:%M:%S",
 }
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="ticket-triage-pipeline")
+    parser.add_argument(
+        "--mode",
+        choices=get_args(get_type_hints(Manifest)["mode"]),
+        required=True,
+        help="Run mode: production or eval.",
+    )
+    return parser.parse_args()
 
 
 def generate_run_dir(run_id: str) -> Path:
@@ -55,10 +66,10 @@ def load_triaged_ids() -> set[str]:
 
     for triaged_file_path in OUTPUT_PATH.glob("*/triaged.csv"):
         with open(
-            triaged_file_path,
-            "r",
-            encoding="UTF-8",
-            newline="",
+                triaged_file_path,
+                "r",
+                encoding="UTF-8",
+                newline="",
         ) as triaged_file:
             triaged_ids.update(
                 ticket["ticket_id"]
@@ -68,7 +79,7 @@ def load_triaged_ids() -> set[str]:
     return triaged_ids
 
 
-def main():
+def main(mode: str):
     start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     run_id = start_time.replace(":", "-") + "_" + uuid.uuid4().hex
     run_path = generate_run_dir(run_id)
@@ -92,7 +103,7 @@ def main():
         manifest_version=MANIFEST_VERSION,
         run_id=run_id,
         status="running",
-        mode=MODE,
+        mode=mode,
         started_at=start_time,
         code=code_info,
         config=config_info,
@@ -104,7 +115,7 @@ def main():
         support_tickets = load_support_tickets(SUPPORT_TICKETS_PATH)
 
         triaged_ticket_ids = []
-        if MODE == "production":
+        if mode == "production":
             triaged_ticket_ids = load_triaged_ids()
 
         ticket_validator = TicketValidator(support_tickets, TICKET_SCHEMA)
@@ -115,7 +126,7 @@ def main():
         ticket_validator.ensure_valid_sender()
         ticket_validator.cleanup_tickets()
 
-        invalid_tickets = ticket_validator.invalid_tickets
+        invalid_tickets = list(ticket_validator.invalid_tickets.values())
         valid_tickets = ticket_validator.tickets
 
         triage_processor = TriageProcessor(
@@ -165,6 +176,13 @@ def main():
         triage_fields = tuple(TriageSchema.model_fields)
 
         write_tickets(
+            invalid_tickets,
+            ticket_fieldnames,
+            run_path,
+            "invalid_tickets.csv",
+            ("reason",),
+        )
+        write_tickets(
             needs_review_tickets,
             ticket_fieldnames,
             run_path,
@@ -201,4 +219,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    main(args.mode)
