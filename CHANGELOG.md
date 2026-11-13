@@ -9,6 +9,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.8.0] - 2026-11-13
+
+### Changed
+
+- Send only `sender`, `subject` and `body` to the model, serialised as JSON, instead of the whole ticket.
+- Tell the model to treat ticket contents as untrusted data.
+- Move the system prompt to `system_prompt.md`.
+
 ## [v0.7.0] - 2026-11-13
 
 ### Changed
