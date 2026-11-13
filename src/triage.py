@@ -20,6 +20,7 @@ INITIAL_WAIT = 1
 MAX_WAIT = 10
 STOP_COUNT = 6
 ABORT_COUNT = 5
+API_TIMEOUT_SECONDS = 10
 LLM_TICKET_FIELDS = ("sender", "subject", "body")
 RETRY_EXCEPTIONS = (APIConnectionError, RateLimitError, InternalServerError)
 
@@ -32,6 +33,8 @@ def get_client():
     if _client is None:
         _client = OpenAI(
             api_key=os.getenv("OPENAI_API_KEY"),
+            timeout=API_TIMEOUT_SECONDS,
+            max_retries=0,
         )
     return _client
 
