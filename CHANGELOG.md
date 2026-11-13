@@ -9,6 +9,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.10.0] - 2026-11-13
+
+### Added
+
+- Add `messy` and `injection` evaluation ticket sets, each with gold labels.
+- Add `scripts/measure_latency.py` to measure single-call API latency when choosing a timeout.
+- Add a data-handling section and a synthetic benchmark section to the README.
+
+### Changed
+
+- **Breaking:** name gold labels `data/<input file>_gold_labels.csv`, one per input file, instead of
+  `data/gold_labels.csv`.
+- Bring the README up to date with the code: the required `--mode` flag, the `--input` option, the run folder and
+  manifest, the `model_reason` column, and the configuration constants.
+
+### Fixed
+
+- Correct the minimum Python version in the README to 3.10 (tested on 3.10), instead of 3.14.
+
 ## [v0.9.0] - 2026-11-13
 
 ### Added
