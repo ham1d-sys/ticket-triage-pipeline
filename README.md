@@ -142,8 +142,9 @@ the batch.
 
 ## Testing
 
-Run the test suite with:
+Install the dev dependencies and run the test suite with:
 
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
