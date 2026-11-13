@@ -6,7 +6,10 @@ from tenacity import wait_none, RetryError
 
 from triage import TriageProcessor, STOP_COUNT
 
+TICKET_FIELDNAMES = ("ticket_id", "sender", "subject", "body", "received_at")
+
 test_tickets = [{
+    "ticket_id": "T01",
     "sender": "maria.k@example.com",
     "subject": "Can't log in",
     "body": "I get invalid credentials every time I try.",
@@ -16,7 +19,7 @@ test_tickets = [{
 
 @pytest.fixture
 def triage_processor():
-    return TriageProcessor(test_tickets, output_path="some path", abort_count=1)
+    return TriageProcessor(test_tickets, TICKET_FIELDNAMES, triaged_ids=set())
 
 
 def make_response_output(refusal: bool = False, fail: bool = False) -> MagicMock | None:
@@ -55,8 +58,10 @@ def test_triage_ticket_retry_after_transient_error(mock_client, triage_processor
 
 @patch("triage.get_client")
 def test_triage_tickets_abort_after_consecutive_transient_errors(mock_client: MagicMock,
-                                                                 triage_processor: TriageProcessor):
+                                                                 triage_processor: TriageProcessor,
+                                                                 monkeypatch: pytest.MonkeyPatch):
     """Ensure triage_tickets() abort current batch after consecutive API connection errors."""
+    monkeypatch.setattr("triage.ABORT_COUNT", 1)
     triage_processor.triage_ticket.retry.wait = wait_none()
     mock_client.return_value.responses.parse.side_effect = APIConnectionError(request=MagicMock())
     with pytest.raises(RetryError):
@@ -70,6 +75,6 @@ def test_triage_tickets_handles_refusal_response(mock_client: MagicMock, triage_
     triage_processor.triage_tickets()
     assert triage_processor.needs_review, "Expected refused ticket to require review."
     assert triage_processor.needs_review[0] == {
-        "content": test_tickets[0],
+        **test_tickets[0],
         "reason": "Refusal.",
     }
