@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.8.1] - 2026-11-13
+
+### Changed
+
+- Tell the model that spam always has low urgency.
+
 ## [v0.8.0] - 2026-11-13
 
 ### Changed
