@@ -9,6 +9,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.7.0] - 2026-11-13
+
+### Changed
+
+- Deduplicate tickets, and skip already-triaged ones, by `ticket_id` plus a hash of the ticket content instead of by
+  `ticket_id` alone.
+
 ## [v0.6.0] - 2026-11-13
 
 ### Added
