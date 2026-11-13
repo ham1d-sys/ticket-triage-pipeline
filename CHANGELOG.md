@@ -9,6 +9,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.8.2] - 2026-11-13
+
+### Fixed
+
+- Set a 10 second API timeout and turn off SDK retries, so tenacity controls all retrying. The client previously used
+  the SDK defaults, a 600 second timeout plus 2 retries.
+
 ## [v0.8.1] - 2026-11-13
 
 ### Changed
