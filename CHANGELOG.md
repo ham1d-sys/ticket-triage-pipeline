@@ -19,7 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Breaking:** name gold labels `data/<input file>_gold_labels.csv`, one per input file, instead of
+- Name gold labels `data/<input file>_gold_labels.csv`, one per input file, instead of
   `data/gold_labels.csv`.
 - Bring the README up to date with the code: the required `--mode` flag, the `--input` option, the run folder and
   manifest, the `model_reason` column, and the configuration constants.
@@ -41,8 +41,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Breaking:** run every CSV in `data/input` by default instead of one fixed file.
-- **Breaking:** `TriageProcessor.triage_ticket()` and `triage_tickets()` are now coroutines, and `main()` and
+- Run every CSV in `data/input` by default instead of one fixed file.
+- `TriageProcessor.triage_ticket()` and `triage_tickets()` are now coroutines, and `main()` and
   `run_pipeline()` are async.
 - Write the output files in a `finally` block so partial results are saved when a run fails, and catch specific errors
   before the generic `Exception`.
