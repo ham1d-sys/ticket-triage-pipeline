@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from logging import getLogger
@@ -19,6 +20,7 @@ INITIAL_WAIT = 1
 MAX_WAIT = 10
 STOP_COUNT = 6
 ABORT_COUNT = 5
+LLM_TICKET_FIELDS = ("sender", "subject", "body")
 RETRY_EXCEPTIONS = (APIConnectionError, RateLimitError, InternalServerError)
 
 MODEL = "gpt-5.6-luna"
@@ -64,7 +66,7 @@ class TriageProcessor:
                 },
                 {
                     "role": "user",
-                    "content": f"{ticket}",
+                    "content": json.dumps({name: ticket[name] for name in LLM_TICKET_FIELDS}, ensure_ascii=False),
                 },
             ],
             text_format=TriageSchema,
