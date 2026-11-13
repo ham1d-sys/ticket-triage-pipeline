@@ -21,6 +21,7 @@ class ConfigInfo:
     model: str
     prompt_sha256: str
     abort_count: int
+    max_concurrency: int
 
 
 @dataclass
