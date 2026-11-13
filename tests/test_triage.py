@@ -19,7 +19,7 @@ test_tickets = [{
 
 @pytest.fixture
 def triage_processor():
-    return TriageProcessor(test_tickets, TICKET_FIELDNAMES, triaged_ids=set())
+    return TriageProcessor(test_tickets, TICKET_FIELDNAMES, triaged_keys=set())
 
 
 def make_response_output(refusal: bool = False, fail: bool = False) -> MagicMock | None:

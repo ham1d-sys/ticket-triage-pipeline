@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from openai import OpenAI, APIConnectionError, RateLimitError, InternalServerError
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential_jitter, RetryError
 
+from hashing_helper import ticket_key
 from schema import TriageSchema
 
 logger = getLogger(__name__)
@@ -35,14 +36,14 @@ def get_client():
 class TriageProcessor:
     """Triage tickets."""
 
-    def __init__(self, tickets: List[Dict[str, str]], ticket_fieldnames, triaged_ids):
+    def __init__(self, tickets: List[Dict[str, str]], ticket_fieldnames, triaged_keys):
         self.tickets = tickets
         self.ticket_fieldnames = ticket_fieldnames
-        self.triaged_ids = triaged_ids
+        self.triaged_keys = triaged_keys
         self.triaged = []
         self.needs_review = []
         self.skipped = 0
-        self.attempted_ids = []
+        self.attempted_keys = []
         self.unattempted = []
 
     @retry(
@@ -75,17 +76,17 @@ class TriageProcessor:
                 if item.type == "refusal":
                     self.needs_review.append(
                         {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "Refusal."})
-                    self.attempted_ids.append(ticket["ticket_id"])
+                    self.attempted_keys.append(ticket_key(ticket, self.ticket_fieldnames))
                     return True  # indicate processing failed
                 else:
                     self.triaged.append({**{name: ticket[name] for name in self.ticket_fieldnames},
                                          **response.output_parsed.model_dump()})
-                    self.attempted_ids.append(ticket["ticket_id"])
+                    self.attempted_keys.append(ticket_key(ticket, self.ticket_fieldnames))
                     return False  # indicate processing succeeded
 
         self.needs_review.append(
             {**{name: ticket[name] for name in self.ticket_fieldnames}, "reason": "No usable response."})
-        self.attempted_ids.append(ticket["ticket_id"])
+        self.attempted_keys.append(ticket_key(ticket, self.ticket_fieldnames))
         return True  # indicate processing failed
 
     def triage_tickets(self) -> None:
@@ -94,7 +95,7 @@ class TriageProcessor:
         failed_retry_count = []
 
         for ticket in self.tickets:
-            if ticket["ticket_id"] in self.triaged_ids:
+            if ticket_key(ticket, self.ticket_fieldnames) in self.triaged_keys:
                 self.skipped += 1
                 continue
 
@@ -107,12 +108,12 @@ class TriageProcessor:
                 self.needs_review.append(
                     {**{name: ticket[name] for name in self.ticket_fieldnames},
                      "reason": f"{type(e).__name__} after {STOP_COUNT} triage attempts."})
-                self.attempted_ids.append(ticket["ticket_id"])
+                self.attempted_keys.append(ticket_key(ticket, self.ticket_fieldnames))
                 failed_retry_count.append(True)
 
                 if len(failed_retry_count) >= ABORT_COUNT and all(failed_retry_count[-ABORT_COUNT:]):
                     self.unattempted = [ticket for ticket in self.tickets if
-                                        ticket["ticket_id"] not in self.attempted_ids]
+                                        ticket_key(ticket, self.ticket_fieldnames) not in self.attempted_keys]
                     raise RetryError(
                         f"Hit {ABORT_COUNT} consecutive API connection, rate-limit or internal server errors")
 

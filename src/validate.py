@@ -4,6 +4,7 @@ from typing import Dict, List
 
 from email_validator import EmailNotValidError, validate_email
 
+from hashing_helper import ticket_key
 from format import strptime_format_to_iso_8601_template
 
 logger = logging.getLogger(__name__)
@@ -115,20 +116,17 @@ class TicketValidator:
             logger.warning(
                 f"Found {invalid_sender_count} ticket(s) whose `sender` field doesn't match an email address' format.")
 
-    def ensure_ticket_id_unique(self) -> None:
-        """Ensure that the id of a ticket is unique."""
-        duplicate_id_count = 0
+    def ensure_ticket_unique(self) -> None:
+        """Ensure no ticket repeats the same `ticket_id` and content as an earlier one."""
+        duplicate_count = 0
 
-        ids = set()
+        seen = set()
         for ticket in self.tickets:
-            ids_len = len(ids)
-            ids.add(ticket.get("ticket_id"))
-            if not len(ids) > ids_len:
-                reason_invalid = f"`ticket_id` field is a duplicate."
-                self.add_invalid_ticket(ticket, reason_invalid)
-                duplicate_id_count += 1
+            key = ticket_key(ticket, self.expected_ticket_fields)
+            if key in seen:
+                self.add_invalid_ticket(ticket, "Duplicate of an earlier ticket (same `ticket_id` and content).")
+                duplicate_count += 1
+            seen.add(key)
 
-        if duplicate_id_count:
-            logger.warning(
-                f"Found {duplicate_id_count} ticket(s) with duplicate `ticket_id` field."
-            )
+        if duplicate_count:
+            logger.warning(f"Found {duplicate_count} duplicate ticket(s) (same `ticket_id` and content).")

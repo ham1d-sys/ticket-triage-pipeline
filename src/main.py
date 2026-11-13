@@ -9,7 +9,7 @@ from typing import get_args, get_type_hints
 
 from tenacity import RetryError
 
-from hashing_helper import sha256_file, sha256_text
+from hashing_helper import sha256_file, sha256_text, ticket_key
 from manifest import (
     Manifest,
     get_git_sha,
@@ -60,9 +60,9 @@ def generate_run_dir(run_id: str) -> Path:
     return run_dir
 
 
-def load_triaged_ids() -> set[str]:
-    """Collect ticket IDs from triaged.csv files in past run directories."""
-    triaged_ids = set()
+def load_triaged_keys() -> set[tuple[str, str]]:
+    """Collect ticket keys (id + content hash) from triaged.csv files in past run directories."""
+    triaged_keys = set()
 
     for triaged_file_path in OUTPUT_PATH.glob("*/triaged.csv"):
         with open(
@@ -71,12 +71,12 @@ def load_triaged_ids() -> set[str]:
                 encoding="UTF-8",
                 newline="",
         ) as triaged_file:
-            triaged_ids.update(
-                ticket["ticket_id"]
+            triaged_keys.update(
+                ticket_key(ticket, TICKET_SCHEMA["fieldnames"])
                 for ticket in csv.DictReader(triaged_file)
             )
 
-    return triaged_ids
+    return triaged_keys
 
 
 def main(mode: str):
@@ -114,13 +114,13 @@ def main(mode: str):
     try:
         support_tickets = load_support_tickets(SUPPORT_TICKETS_PATH)
 
-        triaged_ticket_ids = []
+        triaged_keys = set()
         if mode == "production":
-            triaged_ticket_ids = load_triaged_ids()
+            triaged_keys = load_triaged_keys()
 
         ticket_validator = TicketValidator(support_tickets, TICKET_SCHEMA)
         ticket_validator.ensure_expected_fields_present_and_non_empty()
-        ticket_validator.ensure_ticket_id_unique()
+        ticket_validator.ensure_ticket_unique()
         ticket_validator.ensure_body_in_valid_tickets_gte_3_chars()
         ticket_validator.ensure_valid_received_at_timestamp()
         ticket_validator.ensure_valid_sender()
@@ -132,7 +132,7 @@ def main(mode: str):
         triage_processor = TriageProcessor(
             valid_tickets,
             TICKET_SCHEMA["fieldnames"],
-            triaged_ticket_ids,
+            triaged_keys,
         )
 
         try:
