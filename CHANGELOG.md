@@ -9,6 +9,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.6.0] - 2026-11-13
+
+### Added
+
+- Add `requirements-dev.txt` for test dependencies.
+- Validate sender addresses against the email RFCs with `email-validator` (syntax only, no DNS lookups).
+
+### Changed
+
+- Limit `requirements.txt` to direct dependencies.
+
+### Fixed
+
+- Reject sender addresses that the old `@` check let through, such as `Name <a@b.com>`.
+- Stop a missing sender from crashing sender validation.
+- Update the outdated triage tests.
+
 ## [v0.5.0] - 2026-11-07
 
 ### Added
