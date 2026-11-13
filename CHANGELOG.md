@@ -9,6 +9,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [v0.9.0] - 2026-11-13
+
+### Added
+
+- Process every CSV in an input directory, or a single file, chosen with `--input` (default `data/input`). Each file
+  gets its own run and manifest, and the remaining files are skipped if a run aborts.
+- Triage tickets concurrently with `asyncio`: at most `MAX_CONCURRENCY` (5) API requests are in flight at once, and
+  results are written in input order.
+- Record `max_concurrency` in the manifest config.
+- Add tests for the concurrency limit and the result order.
+
+### Changed
+
+- **Breaking:** run every CSV in `data/input` by default instead of one fixed file.
+- **Breaking:** `TriageProcessor.triage_ticket()` and `triage_tickets()` are now coroutines, and `main()` and
+  `run_pipeline()` are async.
+- Write the output files in a `finally` block so partial results are saved when a run fails, and catch specific errors
+  before the generic `Exception`.
+- Reset the manifest version to 1; the manifest changes were made during evaluation, before any release.
+
+### Fixed
+
+- Stop `unattempted.csv` listing tickets that were skipped as already triaged when a run aborts.
+
 ## [v0.8.2] - 2026-11-13
 
 ### Fixed
