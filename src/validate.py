@@ -2,6 +2,8 @@ import logging
 from datetime import datetime as dt
 from typing import Dict, List
 
+from email_validator import EmailNotValidError, validate_email
+
 from format import strptime_format_to_iso_8601_template
 
 logger = logging.getLogger(__name__)
@@ -94,14 +96,19 @@ class TicketValidator:
                 f"Found {invalid_timestamp_count} ticket(s) whose `received_at` timestamp field does not follow the expected '{readable_timestamp_format}' format.")
 
     def ensure_valid_sender(self) -> None:
-        """Ensure that the sender field of a ticket contains valid email address."""
+        """Ensure that the sender field of a ticket is a valid email address (RFC syntax, no DNS lookup)."""
         invalid_sender_count = 0
 
         for ticket in self.tickets:
-            sender = ticket.get("sender")
-            if not "@" in set(sender):
-                reason_invalid = f"`sender` field doesn't contain a '@' character."
-                self.add_invalid_ticket(ticket, reason_invalid)
+            try:
+                validate_email(
+                    ticket.get("sender") or "",
+                    check_deliverability=False,
+                    allow_quoted_local=True,
+                    allow_domain_literal=True,
+                )
+            except EmailNotValidError as error:
+                self.add_invalid_ticket(ticket, f"`sender` field is not a valid email address ({error})")
                 invalid_sender_count += 1
 
         if invalid_sender_count:

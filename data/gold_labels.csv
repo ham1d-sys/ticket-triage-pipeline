@@ -22,7 +22,7 @@ T20,sam.adeyemi@gmail.com,Charged twice,I was charged twice for my Pro plan this
 T21,z.ahmed@opalworks.pk,Question,,2026-10-28 01:19:45,invalid,,,,,Empty expected field(s).
 T22,li.wei@cloudnest.cn,Calendar sync,Any plans for a Google Calendar sync? It would save me time.,2026-10-28 02:41:55,valid,feature_request,low,no,,
 T23,p.hughes@bluepine.com,UNACCEPTABLE!!!,THIS IS UNACCEPTABLE!!! The logo on the login page looks slightly blurry on my monitor. Fix it NOW.,2026-10-28 05:00:19,valid,bug,low,yes,angry tone but no real impact,
-T24,mailer.daemon.example.org,Re: your order,Where is my order?,2026-10-28 06:30:18,invalid,,,,,`sender` field doesn't contain a '@' character.
+T24,mailer.daemon.example.org,Re: your order,Where is my order?,2026-10-28 06:30:18,invalid,,,,,`sender` field is not a valid email address
 T25,k.lund@nordbyte.no,Address change,"We moved offices, please update our billing address.",,invalid,,,,,Empty expected field(s).
 T26,n.ibrahim@swiftcart.ng,Great product,Just wanted to say the new update is great. Keep it up!,2026-10-28 12:16:16,valid,other,low,no,,
 T27,m.rossi@verdeco.it,Partnership inquiry,We're a design agency interested in becoming a reseller. Who should we talk to?,2026-10-28 15:31:36,valid,other,low,no,,
@@ -34,7 +34,7 @@ T32,b.okon@quickmart.ng,refund pls,"Plz refund mi, i was charge 2x for the subsc
 T33,r.alvarez@brightlane.mx,Payment problem,I was charged twice for my plan and then the checkout page crashed when I tried to retry. Please refund the extra charge.,2026-10-28 23:44:04,valid,billing,high,yes,two categories (billing + bug); explicit ask is the refund,
 T34,v.santos@tidalwave.br,Quick one,ok,2026-10-29 01:24:17,invalid,,,,,`body` field is under 3 characters.
 T35,emma.r@clearpath.org,Data missing,All my project data from last week has disappeared from my account.,2026-10-29 04:31:48,valid,bug,high,no,,
-T36,Support Team,Hello,Please contact us about your account.,2026-10-29 06:33:44,invalid,,,,,`sender` field doesn't contain a '@' character.
+T36,Support Team,Hello,Please contact us about your account.,2026-10-29 06:33:44,invalid,,,,,`sender` field is not a valid email address
 T37,r.singh@veloxlabs.in,Slow app,The app has been slow all day.,yesterday afternoon,invalid,,,,,`received_at` field contains an invalid timestamp.
 T38,omar.h@brightdesk.co,Wrong invoice details,Our company name is misspelled on the latest invoice. Please reissue it as 'Brightdesk Ltd'.,2026-10-29 10:34:29,valid,billing,medium,no,,
 T39,grace.o@lumen.edu,Support hours,What are your support hours during public holidays?,2026-10-29 11:29:44,valid,other,low,no,,
