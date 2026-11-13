@@ -1,0 +1,108 @@
+ticket_id,sender,subject,body,received_at,status,category,urgency,is_edge,edge_reason,invalid_reason
+T01,lena.v@verdantlabs.eu,typo,Typo on the pricing page: 'Enterprize'. See https://example.com/pricing?ref=nav&utm_source=mail#plans,2026-11-02 08:00:00,valid,bug,low,no,,
+T02,jamie.r@fastlane.io,WHY IS IT DOWN,WHY IS THE DASHBOARD DOWN?!?! NOBODY ON MY TEAM CAN LOG IN SINCE 9AM AND WE HAVE A CLIENT DEMO AT 11!!!,2026-11-02 08:47:13,valid,bug,high,no,,
+T03,noah.b@copperpot.co,pricing,what plans do you have and how much is the pro one for 5 users,2026-11-02 09:34:26,valid,billing,low,no,,
+T04,raj.s@coderforge.in,export fails,"Export to PDF fails every time. Trace:
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+Traceback (most recent call last):
+  File ""export.py"", line 88, in render
+    page.draw(table)
+ValueError: cell width exceeds page
+I can still screenshot the tables for now.",2026-11-02 10:21:39,valid,bug,medium,no,,
+T05,ahmed.n@cairotech.eg,Question about data,"Where is our data stored, and can we choose the region? Our legal team is asking.",2026-11-02 11:08:52,valid,other,low,no,,
+T06,harper.j@clearpath.us,Data gone,Everything I uploaded last week is gone from my dashboard. Please restore it.,2026-11-02 11:55:05,valid,bug,high,no,,
+T07,tess.k@amberfield.org,Export,Export to CSV is broken for me since the last update.,03/11/2026 14:20,invalid,,,,,`received_at` field contains an invalid timestamp.
+T08,ben.o@lakeside.cc,😍😍😍,love this app!!! 😍😍😍 best thing since sliced bread 🍞,2026-11-02 13:29:31,valid,other,low,no,,
+T09,dev.patel@gridstack.dev,500 on /v2/invoices,"Every request returns this since 14:05, our billing sync is dead:
+{""status"":500,""error"":""upstream timeout"",""path"":""/v2/invoices"",""request_id"":""a91f""}",2026-11-02 14:16:44,valid,bug,high,no,,
+T10,k.tanaka@sakura-print.jp,請求書について,請求書の宛名を「株式会社さくら印刷」に変更して再発行していただけますか。,2026-11-02 15:03:57,valid,billing,low,no,,
+T11,arjun.v@zenithsoft.in,charged wrong,"You charged me $4,999 instead of $49.99 for the annual plan. Please fix immediately.",2026-11-02 15:50:10,valid,billing,high,no,,
+T12,carlos.m@vistapoint.mx,Re: ayuda,"On Tue, Nov 3, 2026 at 9:14 AM Support <support@vendor.com> wrote:
+> Have you tried clearing your cache?
+
+Si, ya lo intente y sigue igual. Al subir archivos grandes la app se cierra sola. Con archivos pequeños no hay problema.",2026-11-02 16:37:23,valid,bug,medium,no,,
+T13,grace.l@mapleroad.ca,out of office,Automatic reply: I am out of the office until Nov 20 with limited access to email. For urgent matters contact john@mapleroad.ca.,2026-11-02 17:24:36,valid,other,low,yes,"auto-reply, not a real customer message",
+T14,ivan.k@birchfield.ru,invoice,Need invoice for october with our VAT id DE123456789 pls,2026-11-02 18:11:49,valid,billing,low,no,,
+T15,Karen White <karen@whitehall.com>,Billing question,Why was I charged this month? Please explain.,2026-11-02 18:58:02,invalid,,,,,`sender` field is not a valid email address
+T16,chloe.j@pebblebeach.co,Export button,"The export button is greyed out for me, but Ctrl+E still works so no big deal.",2026-11-02 19:45:15,valid,bug,medium,yes,"casual tone suggests low, but broken-with-workaround is medium",
+T17,helen.w@northpier.org,Re: Re: Fwd: Fwd: Payment,"FYI see below, can you sort this out?
+
+---------- Forwarded message ----------
+From: Accounts <accounts@northpier.org>
+Date: Mon, 2 Nov 2026
+Subject: Fwd: card on file
+
+> > Our company card expired last month and the renewal keeps failing.
+> > Please let us know how to add the new card before the next billing date on the 15th.
+
+--
+Helen Wright | Office Manager | North Pier Ltd
+This email and any attachments are confidential and intended solely for the addressee.",2026-11-02 20:32:28,valid,billing,medium,yes,real request buried in a forward chain and a legal footer,
+T18,john..doe@example.com,Login,I cannot log in to my account since this morning.,2026-11-02 21:19:41,invalid,,,,,`sender` field is not a valid email address
+T19,nina.r@loopcraft.io,Integrations,Can you add a Zapier integration? We'd automate half our workflow with it.,2026-11-02 22:06:54,valid,feature_request,low,no,,
+T20,lukas.müller@bergwerk.de,Fehler beim Export,Der Export als CSV liefert immer eine leere Datei. Wir können die Daten vorerst von Hand kopieren.,2026-11-02 22:53:07,valid,bug,medium,no,,
+T21,ruth.e@bluefin.io,Help,,2026-11-02 23:40:20,invalid,,,,,Empty expected field(s).
+T22,mia.f@orchardlane.com,Hello,"Hi, can you tell me where I can find the API docs?",2026-11-03 00:27:33,valid,other,low,no,,
+T23,maria.santos@lojaverde.com.br,cobrança duplicada,"Olá, fui cobrada duas vezes este mês pelo plano Pro. Podem estornar uma das cobranças hoje, por favor?",2026-11-03 01:14:46,valid,billing,high,no,,
+T24,rewards@earn-fast.top,Claim your BTC,Congratulations! You have 0.8 BTC waiting. Connect your wallet at the link to claim: hxxp://claim-btc.example,2026-11-03 02:01:59,valid,spam,low,no,,
+T25,sophie.m@rivercrest.co.uk,Thanks!!,"Just wanted to say thank you to Dan from support, he sorted my login problem in 5 minutes.
+
+Kind regards,
+Sophie Marsh
+Operations Lead
+Rivercrest Ltd
++44 20 7946 0000",2026-11-03 02:48:12,valid,other,low,no,,
+T26,jack.d@ironpeak.com,Re: your invoice,Your recent invoice #8841 shows 2 seats but we only have 1. Can you correct and reissue?,2026-11-03 03:35:25,valid,billing,medium,no,,
+T27,will.s@cedarpoint.net,Slow,The app has been very slow this afternoon.,2026-11-03T14:20:00,invalid,,,,,`received_at` field contains an invalid timestamp.
+T28,daniel.w@summitlogic.com,iOS app,Since updating to iOS 19 the app crashes on launch every time. Can't use it at all on my phone.,2026-11-03 05:09:51,valid,bug,high,no,,
+T29,olivia.p@threadworks.co,Account security,I just saw two logins on my account from a country I've never been to. I didn't do this. Did someone get in?,2026-11-03 05:56:04,valid,bug,high,yes,"security problem: category could be bug or other, urgency is high",
+T30,emma.c@fieldnotes.app,   Feature idea   ,"
+
+   Please add a way to tag projects with colors.   
+
+
+",2026-11-03 06:43:17,valid,feature_request,low,no,,
+T31,beth.h@willowbend.com,Account locked after payment,My payment went through but the account is still locked. Can't work. Need this solved ASAP.,2026-11-03 07:30:30,valid,bug,high,no,,
+T32,victor.z@seoboost.biz,Rank #1 on Google,"Dear Sir/Madam, we guarantee first-page Google ranking in 30 days or your money back. Reply YES for a free audit.",2026-11-03 08:17:43,valid,spam,low,no,,
+T33,amelie.durand@atelier-lune.fr,Idée,"Bonjour, serait-il possible d'ajouter un mode sombre pour l'éditeur ? Merci d'avance !",2026-11-03 09:04:56,valid,feature_request,low,no,,
+T34,priya.n@quietdesk.co,small note,no rush at all but our whole team has been locked out of the admin panel since this morning. whenever you get a chance :),2026-11-03 09:51:09,valid,bug,high,yes,"polite tone, but the impact is severe (urgency follows impact, not tone)",
+T35,"""sofia l""@pixelhut.net",thx,thx!!,2026-11-03 10:38:22,valid,other,low,yes,"ultra-short message, but clearly thanks rather than a vague report",
+T36,sam.d@harborlight.org,Cancel,"Please cancel my subscription before it renews tomorrow, I don't want to be charged again.",2026-11-03 11:25:35,valid,billing,medium,yes,time-sensitive cancellation: medium vs high,
+T37,bob smith@example.com,Bug,The report page shows the wrong totals for October.,2026-11-03 12:12:48,invalid,,,,,`sender` field is not a valid email address
+T38,omar.h@brightkiln.com,app crashes,"i cant logn to my acount since yesterday!! tried reseting my pasword 3 times, nothing. need to send invoices today",2026-11-03 12:59:01,valid,bug,high,no,,
+T39,paul.q@greystone.co,Re: Re: Re:,"   
+ ",2026-11-03 13:46:14,invalid,,,,,`body` field is under 3 characters.
+T40,liam.g@oakridge.ie,Slow + request,The app is slow when loading big projects (about 20 seconds). It would also be nice to have a progress bar.,2026-11-03 14:33:27,valid,bug,medium,yes,bug plus feature request; the bug has more impact,
+T41,user@localhost,Feature,Please add a calendar view to the dashboard.,2026-11-03 15:20:40,invalid,,,,,`sender` field is not a valid email address
+T42,tom.v@outlook.com,Question,"hey, quick q - do u guys do student discounts? 🎓
+
+Sent from my iPhone",2026-11-03 16:07:53,valid,other,low,yes,pricing question: billing (plans) vs other (general question),
+T43,anna.k@brightside.pl,dark mode?,"<div><p>Hi team,</p><p>Please add a <b>dark mode</b> for the mobile app, my eyes hurt at night.</p></div><br><br>-- Anna",2026-11-03 16:54:06,valid,feature_request,low,no,,
+T44,laura.b@sunnyvale.org,tiny thing,"The 'Save' button label is cut off on my laptop, otherwise all fine. Low priority!",2026-11-03 17:41:19,valid,bug,low,no,,
+T45,mehmet.y@bosphorusdev.tr,Karanlık mod,Karanlık mod ekler misiniz? Gözlerim çok yoruluyor.,2026-11-03 18:28:32,valid,feature_request,low,no,,
+T46,,Refund,"I would like a refund for last month, please.",2026-11-03 19:15:45,invalid,,,,,Empty expected field(s).
+T47,yuki.a@kitsune.jp,スケジュール投稿,Hi! 新機能のスケジュール投稿、すごく便利です。でも時々保存されないバグがあります。,2026-11-03 20:02:58,valid,bug,medium,yes,praise plus bug report; the bug has more impact,
+T48,elena.s@lighthouse.gr,login,can't log in!!!!!!!!!!!!!!!! 🤬🤬🤬 FIX IT,2026-11-03 20:49:11,valid,bug,high,no,,
+T49,felix.h@stonebridge.at,Refund,The app has been buggy lately and I want my money back for this month.,2026-11-03 21:36:24,valid,billing,medium,yes,bug complaint plus refund request; the explicit ask is the refund,
+T42,tom.v@outlook.com,Question,"hey, quick q - do u guys do student discounts? 🎓
+
+Sent from my iPhone",2026-11-03 16:07:53,invalid,,,,,Duplicate of an earlier ticket
